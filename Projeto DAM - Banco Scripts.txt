@@ -1,0 +1,157 @@
+-- Table: public.aluno
+
+-- DROP TABLE public.aluno;
+
+CREATE TABLE public.aluno
+(
+    matricula integer NOT NULL,
+    nome character varying(100) COLLATE pg_catalog."default",
+    CONSTRAINT aluno_pkey PRIMARY KEY (matricula)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.aluno
+    OWNER to postgres;
+
+
+-- Table: public.aluno_curso
+
+-- DROP TABLE public.aluno_curso;
+
+CREATE TABLE public.aluno_curso
+(
+    codcurso integer,
+    matricula integer,
+    CONSTRAINT estuda_cod_curso_fkey FOREIGN KEY (codcurso)
+        REFERENCES public.curso (codcurso) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT "estuda_matrícula_fkey" FOREIGN KEY (matricula)
+        REFERENCES public.aluno (matricula) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.aluno_curso
+    OWNER to postgres;
+
+-- Table: public.curso
+
+-- DROP TABLE public.curso;
+
+CREATE TABLE public.curso
+(
+    codcurso integer NOT NULL,
+    nome character varying(100) COLLATE pg_catalog."default",
+    CONSTRAINT curso_pkey PRIMARY KEY (codcurso)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.curso
+    OWNER to postgres;
+
+-- Table: public.disciplina
+
+-- DROP TABLE public.disciplina;
+
+CREATE TABLE public.disciplina
+(
+    coddisciplina integer NOT NULL,
+    nomedisciplina character varying(100) COLLATE pg_catalog."default",
+    codcurso integer,
+    CONSTRAINT disciplina_pkey PRIMARY KEY (coddisciplina),
+    CONSTRAINT codcurso FOREIGN KEY (codcurso)
+        REFERENCES public.curso (codcurso) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.disciplina
+    OWNER to postgres;
+
+-- Table: public.disciplina_curso
+
+-- DROP TABLE public.disciplina_curso;
+
+CREATE TABLE public.disciplina_curso
+(
+    codcurso integer,
+    coddisciplina integer,
+    CONSTRAINT disciplina_curso_codcurso_fkey FOREIGN KEY (codcurso)
+        REFERENCES public.curso (codcurso) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT disciplina_curso_coddisciplina_fkey FOREIGN KEY (coddisciplina)
+        REFERENCES public.disciplina (coddisciplina) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.disciplina_curso
+    OWNER to postgres;
+
+-- Table: public.professor
+
+-- DROP TABLE public.professor;
+
+CREATE TABLE public.professor
+(
+    codprofessor integer NOT NULL,
+    nome character varying(100) COLLATE pg_catalog."default",
+    codcurso integer,
+    CONSTRAINT professor_pkey PRIMARY KEY (codprofessor),
+    CONSTRAINT professor_cod_curso_fkey FOREIGN KEY (codcurso)
+        REFERENCES public.curso (codcurso) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.professor
+    OWNER to postgres;
+
+-- Table: public.professor_curso
+
+-- DROP TABLE public.professor_curso;
+
+CREATE TABLE public.professor_curso
+(
+    codcurso integer,
+    coddisciplina integer,
+    CONSTRAINT "contém_cod_curso_fkey" FOREIGN KEY (codcurso)
+        REFERENCES public.curso (codcurso) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT "contém_cod_disciplina_fkey" FOREIGN KEY (coddisciplina)
+        REFERENCES public.disciplina (coddisciplina) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.professor_curso
+    OWNER to postgres;
